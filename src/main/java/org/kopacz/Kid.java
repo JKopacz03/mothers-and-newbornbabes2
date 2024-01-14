@@ -1,7 +1,6 @@
 package org.kopacz;
 
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Setter;
 import org.kopacz.dto.DayOfTheWeekWithBirthdaysResponse;
@@ -11,11 +10,12 @@ import org.kopacz.dto.HighestKidResponse;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Data
 @Setter(AccessLevel.NONE)
-@AllArgsConstructor
 public class Kid {
+    private static List<Kid> kids = new ArrayList<>();
     private Long id;
     private Character sex;
     private String name;
@@ -23,6 +23,18 @@ public class Kid {
     private Integer weight;
     private Double height;
     private Mother mother;
+
+    public Kid(Long id, Character sex, String name, LocalDate birthday, Integer weight, Double height, Mother mother) {
+        this.id = id;
+        this.sex = sex;
+        this.name = name;
+        this.birthday = birthday;
+        this.weight = weight;
+        this.height = height;
+        this.mother = mother;
+        mother.addKid(this);
+        kids.add(this);
+    }
 
     @Override
     public String toString() {
@@ -37,7 +49,7 @@ public class Kid {
                 '}';
     }
 
-    public static HighestKidResponse getHighestBoy(List<Kid> kids){
+    public static HighestKidResponse getHighestBoy(){
 
 
         Kid kid = kids.stream()
@@ -51,7 +63,7 @@ public class Kid {
                 .build();
     }
 
-    public static HighestKidResponse getHighestGirl(List<Kid> kids){
+    public static HighestKidResponse getHighestGirl(){
 
         Kid kid = kids.stream()
                 .filter(kid1 -> kid1.getSex() == 'c')
@@ -64,36 +76,23 @@ public class Kid {
                 .build();
     }
 
-    public static DayOfTheWeekWithBirthdaysResponse getDayOfTheWeekWithMostBirths(List<Kid> kids){
+    public static DayOfTheWeekWithBirthdaysResponse getDayOfTheWeekWithMostBirths(){
 
-        List<DayOfWeek> dayOfWeek = kids.stream()
-                .map(kid -> kid.getBirthday().getDayOfWeek())
-                .toList();
-
-        List<DayOfTheWeekWithBirthdaysResponse> dayOfTheWeekWithBirthdayResponses =  new ArrayList<>();
-        dayOfTheWeekWithBirthdayResponses.add(new DayOfTheWeekWithBirthdaysResponse(DayOfWeek.MONDAY, Collections.frequency(dayOfWeek, DayOfWeek.MONDAY)));
-        dayOfTheWeekWithBirthdayResponses.add(new DayOfTheWeekWithBirthdaysResponse(DayOfWeek.TUESDAY, Collections.frequency(dayOfWeek, DayOfWeek.TUESDAY)));
-        dayOfTheWeekWithBirthdayResponses.add(new DayOfTheWeekWithBirthdaysResponse(DayOfWeek.WEDNESDAY, Collections.frequency(dayOfWeek, DayOfWeek.WEDNESDAY)));
-        dayOfTheWeekWithBirthdayResponses.add(new DayOfTheWeekWithBirthdaysResponse(DayOfWeek.THURSDAY, Collections.frequency(dayOfWeek, DayOfWeek.THURSDAY)));
-        dayOfTheWeekWithBirthdayResponses.add(new DayOfTheWeekWithBirthdaysResponse(DayOfWeek.FRIDAY, Collections.frequency(dayOfWeek, DayOfWeek.FRIDAY)));
-        dayOfTheWeekWithBirthdayResponses.add(new DayOfTheWeekWithBirthdaysResponse(DayOfWeek.SATURDAY, Collections.frequency(dayOfWeek, DayOfWeek.SATURDAY)));
-        dayOfTheWeekWithBirthdayResponses.add(new DayOfTheWeekWithBirthdaysResponse(DayOfWeek.SUNDAY, Collections.frequency(dayOfWeek, DayOfWeek.SUNDAY)));
-
-        DayOfTheWeekWithBirthdaysResponse dayOfTheWeekWithMostBirths = dayOfTheWeekWithBirthdayResponses.stream()
-                .max(Comparator.comparing(DayOfTheWeekWithBirthdaysResponse::getAmountOfBirths))
+        return kids.stream()
+                .collect(Collectors.groupingBy(k -> k.getBirthday().getDayOfWeek()))
+                .entrySet()
+                .stream()
+                .max(Comparator.comparingInt(k -> k.getValue().size()))
+                .map(k -> new DayOfTheWeekWithBirthdaysResponse(k.getKey(), k.getValue().size()))
                 .get();
-
-        return dayOfTheWeekWithMostBirths;
     }
 
-    public static List<GirlsWithSameNameLikeMotherResponse> getGirlsWithSameNameLikeMother(List<Kid> kids){
+    public static List<GirlsWithSameNameLikeMotherResponse> getGirlsWithSameNameLikeMother(){
 
-        List<GirlsWithSameNameLikeMotherResponse> girlsWithSameNameLikeMother = kids.stream()
+        return kids.stream()
                 .filter(kid1 -> kid1.getSex() == 'c')
                 .filter(kid1 -> kid1.getMother().getName().equalsIgnoreCase(kid1.getName()))
                 .map(kid -> new GirlsWithSameNameLikeMotherResponse(kid.getName(), kid.getBirthday()))
                 .toList();
-
-        return girlsWithSameNameLikeMother;
     }
 }

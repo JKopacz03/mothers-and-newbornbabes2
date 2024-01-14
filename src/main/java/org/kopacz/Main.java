@@ -10,15 +10,13 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
 
-        StartResponse start = Mother.start();
-        List<Mother> mothers = start.getMothers();
-        List<Kid> kids = start.getKids();
+        Mother.start();
 
 //        1.  Podaj imię i wzrost najwyższego chłopca oraz imię i wzrost najwyższej dziewczynki.
-        HighestKidResponse highestBoy = Kid.getHighestBoy(kids);
+        HighestKidResponse highestBoy = Kid.getHighestBoy();
         System.out.println(highestBoy);
 
-        HighestKidResponse highestGirl = Kid.getHighestGirl(kids);
+        HighestKidResponse highestGirl = Kid.getHighestGirl();
         System.out.println(highestGirl);
 
 //        name=Oskar, height=62.0
@@ -26,21 +24,21 @@ public class Main {
 
 //        2. W którym dniu tygodnia urodziło się najwięcej dzieci? Podaj dzien tygodnia i liczbe dzieci.
 
-        DayOfTheWeekWithBirthdaysResponse dayOfTheWeekWithMostBirths = Kid.getDayOfTheWeekWithMostBirths(kids);
+        DayOfTheWeekWithBirthdaysResponse dayOfTheWeekWithMostBirths = Kid.getDayOfTheWeekWithMostBirths();
         System.out.println(dayOfTheWeekWithMostBirths);
 
 //        dayOfWeek=SATURDAY, amountOfBirths=34
 
 //       3. Podaj imiona kobiet w wieku poniżej 25 lat, które urodziły dzieci o wadze powyżej 4000 g.
 
-        List<String> mothersWithChildWeightsOver4000 = Mother.getMothersWithChildWeightsOver4000(mothers);
+        List<String> mothersWithChildWeightsOver4000 = Mother.getMothersWithChildWeightsOver4000();
         System.out.println(mothersWithChildWeightsOver4000);
 
 //        Barbara, Eliza, Janina, Maria, Marzena, Paulina
 
 //       4. Podaj imiona i daty urodzenia dziewczynek, które odziedziczyły imię po matce.
 
-        List<GirlsWithSameNameLikeMotherResponse> girlsWithSameNameLikeMother = Kid.getGirlsWithSameNameLikeMother(kids);
+        List<GirlsWithSameNameLikeMotherResponse> girlsWithSameNameLikeMother = Kid.getGirlsWithSameNameLikeMother();
         System.out.println(girlsWithSameNameLikeMother);
 
 //        name=Anna, birthday=1999-11-21,
@@ -48,7 +46,7 @@ public class Main {
 
 //        5. Znajdz matki które urodziły bliźnięta.
 
-        List<Mother> mothersWithTwins = Mother.getMothersWithTwins(mothers);
+        List<Mother> mothersWithTwins = Mother.getMothersWithTwins();
         System.out.println(mothersWithTwins);
 
 //        Mother(id=1, name=Agata, age=25, kids=[
